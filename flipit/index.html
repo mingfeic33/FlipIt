@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlipIt</title>
+<meta name="description" content="FlipIt: a 30-second browser prank game where an AI gremlin flips your controls while you do everyday computer tasks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="swirl"></canvas>
+<div id="fx"></div>
+
+<header class="top">
+  <button class="brand" id="brandBtn" title="Home">FlipIt</button>
+  <div class="nav">
+    <button class="pill-btn" id="musicBtn">🎵 Music on</button>
+    <button class="pill-btn" id="soundBtn">🔊 Sound on</button>
+    <button class="pill-btn hidden" id="homeBtn">← Home</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- START -->
+  <section id="start" class="screen on">
+    <div class="hero">
+      <h1 class="logo">FlipIt</h1>
+      <p class="tag">A quick warm-up, then your computer gets bewitched for thirty seconds.</p>
+      <div class="best" id="bestLine"></div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">1</span>Choose a mode</h2>
+      <p class="sub">Both start with a normal warm-up, then everything flips.</p>
+      <div class="modes">
+        <button class="mode" data-mode="everyday">
+          <div class="t">Everyday <span class="check">Selected</span></div>
+          <div class="d">Normal computer stuff, made absurd.</div>
+          <div class="tasks"><span>📁 Drag a file</span><span>✖ Close a pop-up</span><span>🔊 Volume slider</span><span>🔑 Password</span><span>☑ I'm not a robot</span></div>
+        </button>
+        <button class="mode" data-mode="classic">
+          <div class="t">Classic <span class="check">Selected</span></div>
+          <div class="d">Quick reflex tricks for your brain.</div>
+          <div class="tasks"><span>🎨 Color trick</span><span>⌨ Type a word</span><span>🎯 Hit the target</span><span>🎁 Fake prize</span></div>
+        </button>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">2</span>Pick your target</h2>
+      <p class="sub">This face becomes the target you hit, the file you drag and the account you log into.</p>
+      <div class="avatars" id="avatars"></div>
+    </div>
+
+    <div class="step">
+      <h2><span class="n">3</span>Keyboard toys</h2>
+      <p class="sub">They work anytime, even mid-round.</p>
+      <div class="legend">
+        <div class="lg"><b><kbd>A</kbd>–<kbd>Z</kbd></b>Each letter plays a random silly sound.</div>
+        <div class="lg"><b><kbd>Space</kbd></b>Rolls a bowling ball that either doubles or halves your score.</div>
+        <div class="lg"><b>Any other key</b>A cute animal pops up somewhere on screen.</div>
+        <div class="lg"><b><kbd>Esc</kbd></b>Panic button. Ends the round right away.</div>
+      </div>
+    </div>
+
+    <div class="startrow">
+      <button class="big" id="startBtn">Start the warm-up</button>
+      <div class="muted" id="aiNote">Best on a laptop with a mouse or trackpad and a keyboard.</div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="screen">
+    <div class="phase-row">
+      <div id="phase">Warm-up · 1 of 3</div>
+      <div class="progress"><i id="prog"></i></div>
+    </div>
+    <div class="hud">
+      <div id="timer">–</div>
+      <div class="divider"></div>
+      <div class="taskwrap"><div class="lbl">Your task</div><div id="task">Get ready…</div></div>
+      <div id="score"><div class="lbl">Score</div><b id="pts">0</b></div>
+      <button id="panic">Panic <kbd>Esc</kbd></button>
+    </div>
+    <div class="sub-row">
+      <div class="chips" id="chips"></div>
+      <div class="gwrap"><div class="bubble" id="bubble">Hi.</div><div class="gmove" id="gmove"></div></div>
+    </div>
+    <div id="arena" tabindex="-1">
+      <div class="focus-warn hidden" id="focusWarn">⌨️ Your keyboard isn't reaching the game. Click anywhere in here to keep typing.</div>
+      <div id="layer"></div>
+      <div class="flash" id="flash"></div>
+      <svg id="fake" viewBox="0 0 24 24"><path d="M3 2l7 19 2.6-7.4L20 11z" fill="#f3cd78" stroke="#2a1d05" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="hints"><span><kbd>Esc</kbd> panic</span><span><kbd>Space</kbd> bowl: ×2 or ÷2</span><span><kbd>A–Z</kbd> sounds</span><span>other keys: animals</span></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="screen">
+    <div class="res-head">
+      <h2>Round over</h2>
+      <div class="row">
+        <button class="ghost" id="changeBtn">Change mode or target</button>
+        <button class="big" id="againBtn" style="padding:12px 26px;font-size:15px">Play again</button>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="panel">
+        <div class="label">Dignity</div>
+        <div class="dignity" id="dignity">–<small> / 10</small></div>
+        <p class="verdict" id="verdict">Judging you…</p>
+        <div class="stats" id="stats"></div>
+        <div class="label">Share</div>
+        <textarea id="shareText" rows="3" readonly></textarea>
+        <div class="row"><button class="ghost" id="copyBtn">Copy brag</button></div>
+      </div>
+      <div class="panel">
+        <div class="label">Cursor replay of the flipped part · 3× speed</div>
+        <canvas id="replay" width="600" height="380"></canvas>
+        <div class="row"><button class="ghost" id="replayBtn">▶ Replay</button></div>
+        <div class="label" style="margin-top:22px">The gremlin's moves</div>
+        <ol class="moves" id="moves"></ol>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
