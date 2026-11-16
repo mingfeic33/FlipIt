@@ -1,5 +1,7 @@
 # FlipIt 😈
 
+https://flipit-flipit.vercel.app/ [https://flipit-flipit.vercel.app/]
+
 **Your computer, bewitched for 30 seconds.**
 
 FlipIt is a browser prank game. You start with a short warm-up of normal computer tasks. Then a gremlin takes over and flips your controls for 30 seconds while you try to keep going. Afterwards you get a dignity score, a sped-up replay of your cursor, and a list of every trick the gremlin pulled on you.
